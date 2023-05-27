@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "759545418723",
+    "project_id": "vertex-login",
+    "storage_bucket": "vertex-login.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:759545418723:android:1ec9bac37a7328d5ae46d6",
+        "android_client_info": {
+          "package_name": "com.example.vertex"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "759545418723-1e1aknfl7g717jhivkq7bvih89oai2q6.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA-qthBUeoj6Nr9GU7frhUC9nFYvwhImOc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "759545418723-1e1aknfl7g717jhivkq7bvih89oai2q6.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
