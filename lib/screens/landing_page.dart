@@ -99,11 +99,11 @@ class Landing_Page extends StatelessWidget {
                           }));
                         },
                         style: ButtonStyle(
-                            backgroundColor: MaterialStateProperty.all<Color>(
+                            backgroundColor: WidgetStateProperty.all<Color>(
                                const  Color.fromARGB(255, 0, 162, 143)),
                             overlayColor: WidgetStateProperty.all<Color>(
                                const  Color.fromARGB(211, 0, 0, 0)),
-                            shape: MaterialStateProperty.all(
+                            shape: WidgetStateProperty.all(
                                 RoundedRectangleBorder(
                                     borderRadius: BorderRadius.circular(11),
                                     side: const BorderSide(
