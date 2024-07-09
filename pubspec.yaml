@@ -33,6 +33,7 @@ dependencies:
   flutter_bloc:
   dio:
   shared_preferences:
+  equatable:
   
 
 
