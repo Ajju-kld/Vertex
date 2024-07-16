@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:vertex/utils/constant.dart';
 
 class Forgottenpassword extends StatelessWidget {
   const Forgottenpassword({super.key});
@@ -7,8 +8,8 @@ class Forgottenpassword extends StatelessWidget {
   }
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Color.fromRGBO(14, 15, 26, 1),
+    return const Scaffold(
+    backgroundColor: UIConstants.backgroundColor,
       body: ForgottenpasswordBody(),
     );
   }

@@ -55,7 +55,7 @@ class AuthenticationRepository {
     _controller.add(AuthenticationStatus.unauthenticated);
   }
 
-  Future<void> register({
+  Future<void> signUp({
     required String username,
     required String password,
     required String email,

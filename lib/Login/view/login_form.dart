@@ -4,10 +4,30 @@ import 'package:flutter_svg/svg.dart';
 import 'package:formz/formz.dart';
 import 'package:vertex/ForgottenPassword/forgottenpassword.dart';
 import 'package:vertex/Login/bloc/login_bloc.dart';
-import 'package:vertex/Signup/view/sign_up.dart';
+import 'package:vertex/Signup/view/signup.dart';
+
 
 
 class LoginForm extends StatelessWidget {
+  
+Route _createRoute() {
+    return PageRouteBuilder(
+      pageBuilder: (context, animation, secondaryAnimation) => const SignUP(),
+      transitionsBuilder: (context, animation, secondaryAnimation, child) {
+        var begin = const Offset(0.0, 1.0);
+        var end = Offset.zero;
+        var curve = Curves.ease;
+
+        var tween =
+            Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
+
+        return SlideTransition(
+          position: animation.drive(tween),
+          child: child,
+        );
+      },
+    );
+  }
   const LoginForm({super.key});
 
   @override
@@ -44,7 +64,7 @@ class LoginForm extends StatelessWidget {
                     const Text('Not registered yet?',style: TextStyle(color: Colors.white,fontSize: 18)),
                     TextButton(
                       onPressed: () {
-                        Navigator.push(context, SignUp.route());
+                    Navigator.pushReplacement(context, _createRoute());
                       },
                       child: const Text('Sign Up',style: TextStyle(color: Colors.white,fontSize: 18)),
                     ),
@@ -80,12 +100,14 @@ class _UsernameInput extends StatelessWidget {
                   width: 10,
                 ),
                 TextField(
-        
+                  
                   style: const TextStyle(color: Colors.white,overflow: TextOverflow.fade),
                   key: const Key('loginForm_usernameInput_textField'),
                   onChanged: (username) =>
                       context.read<LoginBloc>().add(UsernameChanged(username)),
                   decoration: InputDecoration(
+                    filled: true,
+                    fillColor: Colors.black,
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(11),
                       borderSide: const BorderSide(
@@ -149,6 +171,8 @@ class _PasswordInput extends StatelessWidget {
                   onChanged: (password) =>
                       context.read<LoginBloc>().add(PasswordChanged(password)),
                   decoration: InputDecoration(
+                    filled: true,
+                    fillColor: Colors.black,
                     border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(11),
                         borderSide:  BorderSide(
@@ -249,11 +273,14 @@ class _ImageBanner extends StatelessWidget {
 class ForgotPassword extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return TextButton(
+    return Padding(
+      padding: const EdgeInsets.only(right: 10),
+      child: TextButton(
       onPressed: () {
         Navigator.push(context, Forgottenpassword.route());
       },
       child: Text('Forgot Password?', style: TextStyle(color: Colors.white,fontSize: 18)),
+      ),
     );
   }
 }

@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:vertex/Login/view/login_page.dart';
-import 'package:vertex/Signup/view/sign_up.dart';
+
+import 'package:vertex/Signup/view/signup.dart';
+import 'package:vertex/utils/constant.dart';
 
 class LandingPage extends StatelessWidget {
   const LandingPage({super.key});
@@ -11,8 +13,8 @@ class LandingPage extends StatelessWidget {
   }
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Color.fromRGBO(14, 15, 26, 1),
+    return const Scaffold(
+      backgroundColor:UIConstants.backgroundColor,
       body: LandingPageBody(),
     );
   }
@@ -122,7 +124,7 @@ class SignupPageButton extends StatelessWidget {
                   side: const BorderSide(
                       width: 3, color: Color.fromARGB(218, 0, 162, 143))))),
           onPressed: () {
-                   Navigator.push(context,SignUp.route());
+                   Navigator.push(context,SignUP.route());
           },
           child: const Text('Signup',style: TextStyle(color: Colors.white,fontSize: 18),),
         ),
