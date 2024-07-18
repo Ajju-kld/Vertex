@@ -5,41 +5,41 @@ class SignUpForm extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const SingleChildScrollView(
+    return  SingleChildScrollView(
       child: Column(
         children: [
-           SizedBox(
+          const SizedBox(
             height: 40,
           ),
-        Header(),
-           SizedBox(
+        const Header(),
+           const SizedBox(
             height: 40,
           ),
-          UserNameField(),
-          SizedBox(
+          const UserNameField(),
+          const SizedBox(
             height: 20,
           ),
-          EmailField(),
-          SizedBox(
+          const EmailField(),
+          const SizedBox(
             height: 20,
           ),
-          PasswordField(),
-          SizedBox(
+          const PasswordField(),
+          const SizedBox(
             height: 20,
           ),
-          ConfirmPasswordField(),
-          SizedBox(
+          const ConfirmPasswordField(),
+          const SizedBox(
             height: 20,
           ),
-          TermsAndConditions(),
-          SizedBox(
+          const TermsAndConditions(),
+          const SizedBox(
             height: 30,
           ),
           SignupButton(),
-           SizedBox(
+         const   SizedBox(
             height: 40,
           ),
-          Footer(),
+         const  Footer(),
         ],
       ),
     );

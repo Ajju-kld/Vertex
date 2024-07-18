@@ -1,16 +1,21 @@
 import 'dart:async';
-
-import 'package:dio/dio.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:vertex/Repository/service/auth.dart';
+import 'package:vertex/Repository/service/error.dart';
+
 
 enum AuthenticationStatus { unknown, authenticated, unauthenticated }
 
 class AuthenticationRepository {
+  final AuthApi _authApi;
   final _controller = StreamController<AuthenticationStatus>();
+
+  AuthenticationRepository() : _authApi = AuthApi('http://143.244.141.7');
+
   Stream<AuthenticationStatus> get status async* {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
+    final prefs = await SharedPreferences.getInstance();
     final token = prefs.getString('vertex-token');
-    if (token != null && await tokenVerify(token)) {
+    if (token != null && await _authApi.verifyToken(token)) {
       yield AuthenticationStatus.authenticated;
     } else {
       yield AuthenticationStatus.unauthenticated;
@@ -19,40 +24,17 @@ class AuthenticationRepository {
     yield* _controller.stream;
   }
 
-  Future<void> login({
-    required String username,
-    required String password,
-  }) async {
+  Future<void> login(
+      {required String username, required String password}) async {
     try {
-      var dio = Dio();
-
-      final reponse =
-          await dio.post('http://localhost:5000/api/auth/login', data: {
-        'email': username,
-        'password': password,
-      });
-
-      print(reponse);
-      if (reponse.statusCode == 200) {
-        print(reponse.data['token']);
-        SharedPreferences prefs = await SharedPreferences.getInstance();
-        prefs.setString('vertex-token', reponse.data['token']);
-
-        _controller.add(AuthenticationStatus.authenticated);
-      } else {
-        print('error');
-        _controller.add(AuthenticationStatus.unauthenticated);
-      }
+      final response = await _authApi.login(username, password);
+      final token = response['token'];
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      await prefs.setString('vertex-token', token.toString());
+      _controller.add(AuthenticationStatus.authenticated);
     } catch (e) {
-      print(e.toString());
       _controller.add(AuthenticationStatus.unauthenticated);
     }
-  }
-
-  void logOut() {
-    // clear the token
-    deleteToken();
-    _controller.add(AuthenticationStatus.unauthenticated);
   }
 
   Future<void> signUp({
@@ -61,41 +43,27 @@ class AuthenticationRepository {
     required String email,
   }) async {
     try {
-      var dio = Dio();
-      final response = await dio
-          .post('https://api.letsbuildthatapp.com/youtube/register', data: {
-        'username': username,
-        'password': password,
-        'email': email,
-      });
-
-      if (response.statusCode == 200) {
-        SharedPreferences prefs = await SharedPreferences.getInstance();
-        prefs.setString('vertex-token', response.data['token']);
-        _controller.add(AuthenticationStatus.authenticated);
-      } else {
-        _controller.add(AuthenticationStatus.unauthenticated);
-      }
-    } catch (e) {
+      final response = await _authApi.register(username, password, email);
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      prefs.setString('vertex-token', response['token'].toString());
+       
+    } on AuthException catch (e) {
       _controller.add(AuthenticationStatus.unauthenticated);
+      throw AuthException(statusCode:e.statusCode, message:e.message);
     }
   }
 
-  void dispose() {
-    _controller.close();
+  void logOut() {
+    deleteToken();
+    _controller.add(AuthenticationStatus.unauthenticated);
   }
 
-  Future<bool> tokenVerify(String token) async {
-    var dio = Dio();
-    final response =
-        await dio.get('http://localhost:5000/api/auth/self/',
-            options: Options(headers: {
-              'Authorization': 'Bearer $token',
-            }));
-    if (response.statusCode == 200) {
-      return true;
-    } else {
-      return false;
+  Future<void> forgottenPassword(String email) async {
+    try {
+      await _authApi.forgotPassword(email);
+      _controller.add(AuthenticationStatus.authenticated);
+    } catch (e) {
+      _controller.add(AuthenticationStatus.unauthenticated);
     }
   }
 
@@ -104,22 +72,5 @@ class AuthenticationRepository {
     prefs.remove('vertex-token');
   }
 
-  Future<void> forgottenpassword(String email) async {
-    try {
-      var dio = Dio();
-      final response = await dio.post(
-          'https://api.letsbuildthatapp.com/youtube/forgotPassword',
-          data: {
-            'email': email,
-          });
-
-      if (response.statusCode == 200) {
-        _controller.add(AuthenticationStatus.authenticated);
-      } else {
-        _controller.add(AuthenticationStatus.unauthenticated);
-      }
-    } catch (e) {
-      _controller.add(AuthenticationStatus.unauthenticated);
-    }
-  }
+  void dispose() => _controller.close();
 }

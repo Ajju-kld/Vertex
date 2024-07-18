@@ -31,11 +31,14 @@ dependencies:
   flutter:
     sdk: flutter
   flutter_bloc:
-  dio:
+  http:
   shared_preferences:
   equatable:
   formz:
   flutter_svg:
+  animated_snack_bar: ^0.4.0
+  image_picker:
+  http_parser:
   
 
 
@@ -67,6 +70,8 @@ flutter:
 
   # To add assets to your application, add an assets section, like this:
   assets:
+    - assets/images/person.png
+    - assets/images/hole.png
     - assets/images/VERTEX.png
     - assets/images/vertex_logo.png
     - assets/images/LOGIN 1.svg 

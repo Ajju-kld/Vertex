@@ -12,14 +12,16 @@ static Route<void> route() {
   }
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: UIConstants.backgroundColor,
-      body: BlocProvider(
-        create: (context) => RegisterBloc(
-          authenticationRepository:
-              RepositoryProvider.of<AuthenticationRepository>(context),
+    return SafeArea(
+      child: Scaffold(
+        backgroundColor: UIConstants.backgroundColor,
+        body: BlocProvider(
+          create: (context) => RegisterBloc(
+            authenticationRepository:
+                RepositoryProvider.of<AuthenticationRepository>(context),
+          ),
+          child: SignUpForm(),
         ),
-        child: const SafeArea(child: SignUpForm()),
       ),
     );
   }

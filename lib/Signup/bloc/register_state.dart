@@ -9,6 +9,8 @@ final class RegisterState extends Equatable {
     this.termsAccepted = false,
     this.status = FormzSubmissionStatus.initial,
   this.isValid = false,
+  this.error='' ,
+
   });
   final Username username;
   final Email email;
@@ -17,7 +19,7 @@ final class RegisterState extends Equatable {
   final bool termsAccepted;
   final FormzSubmissionStatus status;
   final bool isValid;
-
+  final String error ;
   RegisterState copyWith({
     Username? username,
     Email? email,
@@ -26,7 +28,7 @@ final class RegisterState extends Equatable {
     bool? termsAccepted,
     FormzSubmissionStatus? status,
     bool? isValid,
-
+    String? error,
   }) {
     return RegisterState(
         username: username ?? this.username,
@@ -35,11 +37,12 @@ final class RegisterState extends Equatable {
         confirmPassword: confirmPassword ?? this.confirmPassword,
         termsAccepted: termsAccepted ?? this.termsAccepted,
         status: status ?? this.status,
+        error: error??this.error,
         isValid: isValid??this.isValid);
         
   }
 
   @override
   List<Object> get props =>
-      [username, email, password, confirmPassword, termsAccepted, status,isValid];
+      [username, email, password, confirmPassword, termsAccepted, status,isValid,error];
 }

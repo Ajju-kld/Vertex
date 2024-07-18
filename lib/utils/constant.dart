@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 class UIConstants {
   // Colors
-  static const Color primaryColor = Color(0xFF0000FF);
+  static const Color primaryColor = Color.fromARGB(218, 0, 162, 143);
   static const Color secondaryColor = Color(0xFFFF0000);
   static const Color backgroundColor = Color.fromRGBO(30, 30, 39, 1);
 

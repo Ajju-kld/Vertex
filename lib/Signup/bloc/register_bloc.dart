@@ -1,9 +1,14 @@
+import 'dart:async';
+
 import 'package:bloc/bloc.dart';
+
 import 'package:equatable/equatable.dart';
 import 'package:formz/formz.dart';
+import 'package:http/http.dart';
 import 'package:vertex/Authentication/bloc/authentication_bloc.dart';
 import 'package:vertex/Login/models/models.dart';
 import 'package:vertex/Repository/authentication_repository/authentication_repository.dart';
+import 'package:vertex/Repository/service/error.dart';
 import 'package:vertex/Repository/user_repository/user_repository.dart';
 import 'package:vertex/Signup/model/models.dart';
 
@@ -13,8 +18,10 @@ part 'register_state.dart';
 class RegisterBloc extends Bloc<RegisterEvent, RegisterState> {
   RegisterBloc(
       {required this.authenticationRepository,
+
+
    })
-      : super(RegisterState())
+      : super(const RegisterState())
  {
     on<RegisterUsernameChanged>(_onUsernameChanged);
     on<RegisterEmailChanged>(_onEmailChanged);
@@ -35,7 +42,7 @@ void _onUsernameChanged(
     final username=Username.dirty(event.username);
     emit(state.copyWith(
       username: username,
-      isValid: Formz.validate([username,state.email,state.password,state.confirmPassword]),
+      isValid: state.isValid&&Formz.validate([username,state.email,state.password,state.confirmPassword]),
     ));
 }
 
@@ -46,7 +53,7 @@ void _onEmailChanged(
     final email=Email.dirty(event.email);
     emit(state.copyWith(
       email: email,
-      isValid: Formz.validate([state.username,email,state.password,state.confirmPassword]),
+      isValid: state.isValid&&Formz.validate([state.username,email,state.password,state.confirmPassword]),
     ));}
 void _onPasswordChanged(
   RegisterPasswordChanged event,
@@ -55,7 +62,7 @@ void _onPasswordChanged(
     final password=Password.dirty(event.password);
     emit(state.copyWith(
       password: password,
-      isValid: Formz.validate([state.username,state.email,password,state.confirmPassword]),
+      isValid:state.isValid &&Formz.validate([state.username,state.email,password,state.confirmPassword]),
     ));
 
 
@@ -68,7 +75,8 @@ void _onConfirmPasswordChanged(
     final confirmPassword=Password.dirty(event.confirmPassword);
     emit(state.copyWith(
       confirmPassword: confirmPassword,
-      isValid: Formz.validate([state.username,state.email,state.password,confirmPassword]),
+      isValid:_passwordsMatch()&&state.isValid&&Formz.validate([state.username,state.email,state.password,confirmPassword]),
+      error: _passwordsMatch()?'': 'Passwords do not match'
     ));
 
 
@@ -80,7 +88,8 @@ void _onTermsAccepted(
 ){
     emit(state.copyWith(
       termsAccepted: event.accepted,
-      isValid: Formz.validate([state.username,state.email,state.password,state.confirmPassword]),
+      isValid: _passwordsMatch()&&event.accepted && Formz.validate([state.username,state.email,state.password,state.confirmPassword]),
+      error: null
     ));
 }
 
@@ -88,22 +97,32 @@ void _onSubmitted(
   RegisterSubmitted event,
   Emitter<RegisterState> emit,
 ) async {
-  if (state.isValid) {
+  if (state.isValid && state.termsAccepted && _passwordsMatch()) {
     emit(state.copyWith(status: FormzSubmissionStatus.inProgress));
   }
   try {
+   
     await authenticationRepository.signUp(
         username: state.username.value,
         email: state.email.value,
         password: state.password.value);
-    emit(state.copyWith(status: FormzSubmissionStatus.success));
+    emit(state.copyWith(status: FormzSubmissionStatus.success,
+    error: null));
 
-   
-  } catch (e) {
-    emit(state.copyWith(status: FormzSubmissionStatus.failure));
+  } 
+
+  catch (e) {
+    if (e is AuthException) {
+      print(e.message);
+      emit(state.copyWith(status: FormzSubmissionStatus.failure,error: e.message ));
+    } else {
+      
+    emit(state.copyWith(status: FormzSubmissionStatus.failure,error: e.toString() ));
+    }
   }
-
-
-
+ 
 }
+  bool _passwordsMatch() {
+    return state.password.value == state.confirmPassword.value;
+  }
 }
