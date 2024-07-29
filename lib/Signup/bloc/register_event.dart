@@ -43,6 +43,18 @@ final class RegisterTermsAccepted extends RegisterEvent {
 
 }
 
+final class ProfileImageChanged extends RegisterEvent {
+  const ProfileImageChanged(this.profileImage);
+  final File profileImage;
+  @override
+  List<Object> get props => [profileImage];
+}
+
+
+final class NextButtonPressed extends RegisterEvent {
+  const NextButtonPressed();
+}
+
 
 final class RegisterSubmitted extends RegisterEvent{
   const RegisterSubmitted();

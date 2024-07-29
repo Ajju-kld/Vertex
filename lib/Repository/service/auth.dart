@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:io';
 import 'package:http/http.dart' as http;
 import 'package:vertex/Repository/service/error.dart';
 import 'api_base.dart';
@@ -23,12 +24,17 @@ class AuthApi extends ApiBase {
   }
 
   Future<Map<String, dynamic>> register(
-      String username, String password, String email) async {
-    final response = await post('/auth/register', body: {
-      'username': username,
-      'password': password,
-      'email': email,
-    });
+      String username, String password, String email, File? profile) async {
+    print(profile);
+    final response = await postFormData(
+        '/auth/register',
+        {
+          'username': username,
+          'password': password,
+          'email': email,
+        },
+        file: profile,
+        fileField: 'profile');
 
     if (response.statusCode >= 200 && response.statusCode < 300) {
       return json.decode(response.body);
@@ -37,7 +43,7 @@ class AuthApi extends ApiBase {
       print(responseJson);
       throw AuthException(
         statusCode: responseJson['statusCode'] ?? response.statusCode,
-        message:responseJson['message'] ?? 'Registration failed',
+        message: responseJson['message'] ?? 'Registration failed',
       );
     }
   }

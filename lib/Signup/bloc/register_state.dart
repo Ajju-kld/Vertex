@@ -9,6 +9,7 @@ final class RegisterState extends Equatable {
     this.termsAccepted = false,
     this.status = FormzSubmissionStatus.initial,
   this.isValid = false,
+  this.profileImage=const ProfileImage.pure(), 
   this.error='' ,
 
   });
@@ -20,6 +21,7 @@ final class RegisterState extends Equatable {
   final FormzSubmissionStatus status;
   final bool isValid;
   final String error ;
+  final ProfileImage profileImage;
   RegisterState copyWith({
     Username? username,
     Email? email,
@@ -29,6 +31,7 @@ final class RegisterState extends Equatable {
     FormzSubmissionStatus? status,
     bool? isValid,
     String? error,
+    ProfileImage? profileImage,
   }) {
     return RegisterState(
         username: username ?? this.username,
@@ -38,11 +41,12 @@ final class RegisterState extends Equatable {
         termsAccepted: termsAccepted ?? this.termsAccepted,
         status: status ?? this.status,
         error: error??this.error,
-        isValid: isValid??this.isValid);
+        isValid: isValid??this.isValid,
+        profileImage: profileImage??this.profileImage,);
         
   }
 
   @override
   List<Object> get props =>
-      [username, email, password, confirmPassword, termsAccepted, status,isValid,error];
+      [username, email, password, confirmPassword, termsAccepted, status,isValid,error,profileImage];
 }

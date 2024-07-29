@@ -1,14 +1,18 @@
-import 'dart:async';
+import 'dart:io';
 
 import 'package:animated_snack_bar/animated_snack_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:formz/formz.dart';
-import 'package:vertex/Homepage/home.dart';
+import 'package:image_picker/image_picker.dart';
+
+import 'package:vertex/Homepage/view/home_page.dart';
 import 'package:vertex/Login/view/login_page.dart';
-import 'package:vertex/Repository/authentication_repository/authentication_repository.dart';
+
 import 'package:vertex/Signup/bloc/register_bloc.dart';
-import 'package:vertex/Signup/view/upload_profile.dart';
+import 'package:vertex/Signup/view/animation/card_hidden_animation.dart';
+import 'package:vertex/Signup/view/signup.dart';
+
 import 'package:vertex/utils/constant.dart';
 
 // header
@@ -36,6 +40,7 @@ class Header extends StatelessWidget {
   }
 }
 
+// username
 class UserNameField extends StatelessWidget {
   const UserNameField({super.key});
 
@@ -87,6 +92,7 @@ class UserNameField extends StatelessWidget {
   }
 }
 
+// email field
 class EmailField extends StatelessWidget {
   const EmailField({super.key});
 
@@ -184,6 +190,7 @@ class PasswordField extends StatelessWidget {
   }
 }
 
+// confirm password
 class ConfirmPasswordField extends StatelessWidget {
   const ConfirmPasswordField({super.key});
 
@@ -235,6 +242,7 @@ class ConfirmPasswordField extends StatelessWidget {
   }
 }
 
+// terms and conditions
 class TermsAndConditions extends StatelessWidget {
   const TermsAndConditions({super.key});
 
@@ -273,74 +281,9 @@ class TermsAndConditions extends StatelessWidget {
   }
 }
 
-class SignupButton extends StatelessWidget {
-   SignupButton({super.key});
+// signup button
 
-  @override
-  Widget build(BuildContext context) {
-    return BlocListener<RegisterBloc, RegisterState>(
-      listenWhen: (previous, current) => previous.status != current.status,
-      listener: (context, state) {
-        if (state.status.isSuccess) {
-          Navigator.push(context, UploadProfilePage.route(), );
-        
-        }
-        if (state.status.isFailure) {
-          AnimatedSnackBar.material(
-            state.error,
-            type: AnimatedSnackBarType.error,
-            desktopSnackBarPosition: DesktopSnackBarPosition.bottomCenter,
-            mobileSnackBarPosition: MobileSnackBarPosition.bottom,
-            duration: const Duration(seconds: 3),
-            animationCurve: Curves.easeInOut,
-            animationDuration: const Duration(milliseconds: 500),
-            snackBarStrategy: RemoveSnackBarStrategy(),
-          ).show(context);
-        }
-      },
-      child: BlocBuilder<RegisterBloc, RegisterState>(
-        builder: (context, state) {
-          return Hero(
-            tag: 'signup',
-            child: SizedBox(
-              width: 310,
-              height: 60,
-              child: ElevatedButton(
-                key: const Key('signupForm_signup_raisedButton'),
-                style: ButtonStyle(
-                    backgroundColor: state.isValid
-                        ? WidgetStateProperty.all<Color>(
-                            const Color.fromARGB(255, 0, 162, 143))
-                        : WidgetStateProperty.all<Color>(
-                            const Color.fromARGB(114, 0, 162, 143)),
-                    overlayColor: WidgetStateProperty.all<Color>(
-                        const Color.fromARGB(211, 0, 0, 0)),
-                    shape: WidgetStateProperty.all(RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(11),
-                        side: const BorderSide(
-                            width: 3,
-                            color: Color.fromARGB(218, 0, 162, 143))))),
-                onPressed: state.isValid
-                    ? () async {
-                        context
-                            .read<RegisterBloc>()
-                            .add(const RegisterSubmitted());
-                      }
-                    : null,
-                child: state.status.isInProgress
-                    ? const CircularProgressIndicator()
-                    : const Text(
-                        'Sign Up',
-                        style: TextStyle(fontSize: 18, color: Colors.white),
-                      ),
-              ),
-            ),
-          );
-        },
-      ),
-    );
-  }
-}
+// footer
 
 class Footer extends StatelessWidget {
   const Footer({super.key});
@@ -386,6 +329,199 @@ class Footer extends StatelessWidget {
               style: TextStyle(color: Colors.white, fontSize: 18),
             )),
       ],
+    );
+  }
+}
+
+class NextButton extends StatelessWidget {
+  const NextButton({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    Route _createRoute() {
+      return PageRouteBuilder(
+        pageBuilder: (context, animation, secondaryAnimation) =>
+            const UploadProfile(),
+        transitionsBuilder: (context, animation, secondaryAnimation, child) {
+          var begin = const Offset(1.0, 0.0);
+          var end = Offset.zero;
+          var curve = Curves.ease;
+
+          var tween =
+              Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
+
+          return SlideTransition(
+            position: animation.drive(tween),
+            child: child,
+          );
+        },
+      );
+    }
+
+    return BlocBuilder<RegisterBloc, RegisterState>(
+      builder: (context, state) {
+        return SizedBox(
+            width: 310,
+            height: 60,
+            child: ElevatedButton(
+              style: UIConstants.primaryButtonStyle(isValid: state.isValid),
+              onPressed: state.isValid
+                  ? () {
+                      print(state.isValid);
+                      FocusScope.of(context).unfocus();
+                      Navigator.of(context).push(_createRoute());
+                      }
+                  : null,
+              child: const Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                    'Next',
+                    style: TextStyle(color: Colors.white, fontSize: 30),
+                  ),
+                  Icon(
+                    Icons.arrow_right_alt,
+                    color: Colors.white,
+                    size: 30,
+                    weight: 50,
+                    grade: 22,
+                  )
+                ],
+              ),
+            ));
+      },
+    );
+  }
+}
+class SignupButton extends StatelessWidget {
+  final AnimationController? holeController;
+  final AnimationController? cardController;
+
+  const SignupButton({
+    Key? key,
+    this.holeController,
+    this.cardController,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return BlocListener<RegisterBloc, RegisterState>(
+      listenWhen: (previous, current) => previous.status != current.status,
+      listener: (context, state) {
+        // ... (keep existing listener logic)
+      },
+      child: BlocBuilder<RegisterBloc, RegisterState>(
+        builder: (context, state) {
+          return Hero(
+            tag: 'signup',
+            child: SizedBox(
+              width: 310,
+              height: 60,
+              child: ElevatedButton(
+                key: const Key('signupForm_signup_raisedButton'),
+                style: UIConstants.primaryButtonStyle(isValid: state.isValid),
+                onPressed: state.isValid
+                    ? () async {
+                     
+                        // Play the animation
+                        if (holeController != null && cardController != null) {
+                          await holeController!.forward();
+                          await cardController!.forward();
+                        Future.delayed(const Duration(seconds: 2));
+                          await holeController!.reverse();
+                        }
+                        // After animation, submit the form
+                        context
+                            .read<RegisterBloc>()
+                            .add(const RegisterSubmitted());
+                           
+                      }
+                    : null,
+                child: state.status.isInProgress
+                    ? const CircularProgressIndicator()
+                    : const Text(
+                        'Sign Up',
+                        style: TextStyle(fontSize: 18, color: Colors.white),
+                      ),
+              ),
+            ),
+          );
+        },
+      ),
+    );
+  }
+}
+// pick image button
+
+class PickImageButton extends StatelessWidget {
+  const PickImageButton({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return BlocListener<RegisterBloc, RegisterState>(
+      listener: (context, state) {
+        // TODO
+        if (state.profileImage.error != null) {
+          AnimatedSnackBar.material(
+            state.profileImage.error!,
+            type: AnimatedSnackBarType.error,
+            desktopSnackBarPosition: DesktopSnackBarPosition.bottomCenter,
+            mobileSnackBarPosition: MobileSnackBarPosition.bottom,
+            duration: const Duration(seconds: 3),
+            animationCurve: Curves.easeInOut,
+            animationDuration: const Duration(milliseconds: 500),
+            snackBarStrategy: RemoveSnackBarStrategy(),
+          ).show(context);
+        }
+      },
+      child: BlocBuilder<RegisterBloc, RegisterState>(
+        builder: (context, state) {
+          return SizedBox(
+            width: 320,
+            height: 60,
+            child: TextButton(
+              style: UIConstants.textButtonStyle(),
+              onPressed: state.status.isInProgress
+                  ? null
+                  : () async {
+                      final imagePicker = ImagePicker();
+                      final pickedImage = await imagePicker.pickImage(
+                          source: ImageSource.gallery);
+                      context
+                          .read<RegisterBloc>()
+                          .add(ProfileImageChanged(File(pickedImage!.path)));
+                    },
+              child: const Text('Pick Image',
+                  style: TextStyle(color: Colors.white)),
+            ),
+          );
+        },
+      ),
+    );
+  }
+}
+class CardProfile extends StatelessWidget {
+  final Function(AnimationController, AnimationController) onControllersReady;
+
+  const CardProfile({Key? key, required this.onControllersReady})
+      : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return BlocBuilder<RegisterBloc, RegisterState>(
+      builder: (context, state) {
+        return CardHiddenAnimation(
+            onControllersReady: onControllersReady,
+            child:  Center(
+              child: CircleAvatar(
+                backgroundImage: state.profileImage.value != null
+                    ? FileImage(state.profileImage.value!)
+                    : const AssetImage('assets/images/person.png')
+                        as ImageProvider,
+                radius: 130,
+              ),
+            ));
+      },
     );
   }
 }

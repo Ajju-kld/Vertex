@@ -5,7 +5,7 @@ import 'package:vertex/Authentication/bloc/authentication_bloc.dart';
 import 'package:vertex/Homepage/home.dart';
 import 'package:vertex/Login/view/login_page.dart';
 import 'package:vertex/Repository/authentication_repository/authentication_repository.dart';
-import 'package:vertex/Signup/view/upload_profile.dart';
+
 
 import 'Landingpage/view/landing_page.dart';
 

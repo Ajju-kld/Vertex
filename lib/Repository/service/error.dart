@@ -9,3 +9,4 @@ class AuthException implements Exception {
     return 'AuthException: $statusCode - $message';
   }
 }
+

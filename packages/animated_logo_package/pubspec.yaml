@@ -1,0 +1,17 @@
+name: animated_logo_package
+description: A customizable animated logo package
+version: 1.0.0
+homepage: https://your_package_homepage.com
+
+environment:
+  sdk: '>=3.4.3 <4.0.0'
+
+dependencies:
+  flutter:
+    sdk: flutter
+  flutter_bloc:
+  equatable: 
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter

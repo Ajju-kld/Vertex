@@ -8,7 +8,7 @@ class User extends Equatable {
   final List<String> following; // Changed to List<String>
   final bool private; // Added private
   final String profile; // If this is meant to be the profile description
-
+  
 
   const User({
     required this.username,

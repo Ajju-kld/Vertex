@@ -39,6 +39,11 @@ dependencies:
   animated_snack_bar: ^0.4.0
   image_picker:
   http_parser:
+  flutter_staggered_grid_view:
+  shimmer:
+  stacked_card_carousel:
+  animated_logo_package:
+    path: './packages/animated_logo_package' 
   
 
 

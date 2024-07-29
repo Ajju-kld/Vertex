@@ -1,10 +1,13 @@
+import 'package:animated_logo_package/animated_logo_package.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:vertex/Authentication/bloc/authentication_bloc.dart';
+import 'package:vertex/Homepage/bloc/bottom_navigation_bloc.dart';
 import 'package:vertex/Login/bloc/login_bloc.dart';
 import 'package:vertex/Repository/authentication_repository/authentication_repository.dart';
 import 'package:vertex/Repository/user_repository/user_repository.dart';
+import 'package:vertex/Signup/bloc/register_bloc.dart';
 import 'package:vertex/app_view.dart';
 
 void main() {
@@ -38,12 +41,25 @@ class _MyAppState extends State<MyApp> {
   Widget build(BuildContext context) {
    return RepositoryProvider.value(
     value:_authenticationRepository,
-    child: BlocProvider(
-      create: (context){
-        return AuthenticationBloc(authenticationRepository: _authenticationRepository,
-        userRepository: _userRepository);
-      },
-      child:  const AppView(),
+    child: MultiBlocProvider(
+      providers: [
+        BlocProvider<AuthenticationBloc>(
+          create: (context) => AuthenticationBloc(
+            authenticationRepository: _authenticationRepository,
+            userRepository: _userRepository,
+          ),
+        
+        ),
+        BlocProvider<BottomNavigationBloc>(create: 
+        (context) => BottomNavigationBloc()),
+        BlocProvider<RegisterBloc>(create:
+        (context) => RegisterBloc(authenticationRepository: _authenticationRepository) ),
+        BlocProvider<LoginBloc>(create: (context) =>LoginBloc(authenticationRepository: _authenticationRepository)),
+        BlocProvider<LogoAnimationBloc>(
+          create: (context) => LogoAnimationBloc(),
+        )
+      ],
+      child: const AppView(),
     ),
    );
   }

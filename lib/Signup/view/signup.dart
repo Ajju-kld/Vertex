@@ -12,17 +12,28 @@ static Route<void> route() {
   }
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
+    return const SafeArea(
       child: Scaffold(
         backgroundColor: UIConstants.backgroundColor,
-        body: BlocProvider(
-          create: (context) => RegisterBloc(
-            authenticationRepository:
-                RepositoryProvider.of<AuthenticationRepository>(context),
-          ),
-          child: SignUpForm(),
-        ),
+        body: SignUpForm(),
       ),
     );
+  }
+}
+
+
+class UploadProfile extends StatelessWidget {
+  const UploadProfile({super.key});
+static Route<void> route() {
+    return MaterialPageRoute<void>(builder: (_) => const UploadProfile());
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return const SafeArea(
+      child: Scaffold(
+        backgroundColor: UIConstants.backgroundColor,
+        body:UploadProfileForm(),
+    ));
   }
 }

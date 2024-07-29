@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:io';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:vertex/Repository/service/auth.dart';
 import 'package:vertex/Repository/service/error.dart';
@@ -41,12 +42,13 @@ class AuthenticationRepository {
     required String username,
     required String password,
     required String email,
+    required File? profileImage,
   }) async {
     try {
-      final response = await _authApi.register(username, password, email);
+      final response = await _authApi.register(username, password, email,profileImage);
       SharedPreferences prefs = await SharedPreferences.getInstance();
       prefs.setString('vertex-token', response['token'].toString());
-       
+       _controller.add(AuthenticationStatus.authenticated);
     } on AuthException catch (e) {
       _controller.add(AuthenticationStatus.unauthenticated);
       throw AuthException(statusCode:e.statusCode, message:e.message);

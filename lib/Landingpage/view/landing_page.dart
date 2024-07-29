@@ -1,4 +1,6 @@
+import 'package:animated_logo_package/animated_logo_package.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:vertex/Login/view/login_page.dart';
 
 import 'package:vertex/Signup/view/signup.dart';
@@ -59,11 +61,7 @@ class ImageBanner extends StatelessWidget {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        Image.asset(
-          'assets/images/vertex_logo.png',
-         
-   
-        ),
+        const Logo(),
         Image.asset('assets/images/VERTEX.png', width: 300, height: 200),
       ],
     );
@@ -132,3 +130,62 @@ class SignupPageButton extends StatelessWidget {
     );
   }
 }
+
+class Logo extends StatefulWidget {
+  const Logo({super.key});
+
+  @override
+  State<Logo> createState() => _LogoState();
+}
+
+class _LogoState extends State<Logo> with SingleTickerProviderStateMixin {
+  late AnimationController _controller;
+
+  @override
+void initState() {
+    // TODO: implement initState
+    
+    _controller = AnimationController(
+      duration: const Duration(milliseconds: 100),
+      vsync: this,
+    )..repeat();
+    _controller.addListener(_animateLogo);
+  }
+
+
+  void _animateLogo() {
+    context.read<LogoAnimationBloc>().add(AnimateLogo());
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+
+
+  @override
+  Widget build(BuildContext context) {
+ return BlocBuilder<LogoAnimationBloc, LogoAnimationState>(
+  builder: (context, state) {
+  if (state is LogoAnimationUpdate) {
+          return AnimatedLogo(
+            dotPositions: state.dotPositions,
+            config: const LogoConfig(
+              circleColor: Colors.teal,
+              lineColor: Colors.black,
+              dotColor: Color.fromARGB(255, 255, 255, 255),
+              dotSize: 15.0,
+              lineThickness: 4.0,
+              size: 240.0,
+              scaleFactor: 2,
+            ),
+          );
+        }
+        return const AnimatedLogo(dotPositions: []);
+  },
+ );
+  }
+}
+
